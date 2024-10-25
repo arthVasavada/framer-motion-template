@@ -1,4 +1,4 @@
-import { motion, useAnimation, useInView, useScroll } from "framer-motion";
+import { motion, useAnimation, useInView, useScroll, useTransform } from "framer-motion";
 import { useEffect, useRef } from "react";
 
 const gridContainerVariants = {
@@ -23,6 +23,15 @@ function App() {
 
   const isInView = useInView(containerRef, { once: true });
   const mainControls = useAnimation();
+
+  const {scrollYProgress} = useScroll({
+    target:containerRef,
+    offset:["start end", "end end"]
+  })
+
+  const paragraphOneValue = useTransform(scrollYProgress,[0,1],["-100%","0%"])
+
+  const paragraphTwoValue = useTransform(scrollYProgress,[0,1],["100%","0%"])
 
   useEffect(() => {
     if (isInView) {
@@ -151,7 +160,7 @@ function App() {
           </motion.svg>
         </motion.div>
       </motion.section>
-      <section className="flex flex-col gap-10 mb-10" ref={containerRef}>
+      <section className="flex flex-col gap-10 mb-10 items-center" ref={containerRef}>
         <motion.h1
           className="text-5xl tracking-wide text-slate-100"
           animate={mainControls}
@@ -166,13 +175,7 @@ function App() {
         </motion.h1>
         <motion.p
           className="text-slate-100 font-thin text-4xl w-1/2 mx-auto"
-          animate={mainControls}
-          initial="hidden"
-          variants={{
-            hidden: { opactiy: 0, x: 75 },
-            visible: { opacity: 1, x: 0 },
-          }}
-          transition={{ ease: "easeOut", delay: 0.3, duration: 1 }}
+          style={{translateX:paragraphOneValue}}
         >
           Lorem Ipsum is simply dummy text of the printing and typesetting
           industry. Lorem Ipsum has been the industry's standard dummy text ever
@@ -181,13 +184,7 @@ function App() {
         </motion.p>
         <motion.p
           className="text-slate-100 font-thin text-4xl w-1/2 mx-auto"
-          animate={mainControls}
-          initial="hidden"
-          variants={{
-            hidden: { opactiy: 0, x: -75 },
-            visible: { opacity: 1, x: 0 },
-          }}
-          transition={{ ease: "easeOut", delay: 0.3, duration: 1 }}
+          style={{translateX: paragraphTwoValue}}
         >
           It has survived not only five centuries, but also the leap into
           electronic typesetting, remaining essentially unchanged. It was
